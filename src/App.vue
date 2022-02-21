@@ -23,6 +23,8 @@ onMounted(() => {
   <div v-for="(asana, i) in asanasArray">
     <AsanaView v-if="currentIndex == i" :asana="asana" @done="nextAsana" />
   </div>
+  <button @click="currentIndex--">Previous</button>
+  <button @click="currentIndex++">Next</button>
 </template>
 
 <style></style>
