@@ -2,25 +2,22 @@
   <p>
     <h2>{{ props.asana.name }}</h2>
   </p>
+  <svg id="svg" width="200" height="200" viewPort="0 0 100 100" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <circle r="90" cx="100" cy="100" fill="transparent" stroke-dasharray="565.48" stroke-dashoffset="0"></circle>
+  <circle ref="bar" id="bar" r="90" cx="100" cy="100" fill="transparent" stroke-dasharray="565.48" stroke-dashoffset="0"></circle>
+</svg>
   <p class="f-headline lh-solid ma0 tc">
     {{ countdownDisplay }}
   </p>
   <p><strong v-if="isSetup">SETUP</strong></p>
   <p><strong v-if="isDuration">ASANA</strong></p>
   <p><strong v-if="isCooldown">COOLDOWN</strong></p>
-  <input
-    class="w-100"
-    type="range"
-    min="0"
-    :max="props.asana.totalTime"
-    v-model.number="countdown"
-  />
+
   <button @click="playPause" class="f2 mt4">Play/Pause</button>
 </template>
 
 <script lang="ts" setup>
 import { computed, onMounted, onUnmounted, ref } from "vue";
-import { asanas } from "../data/asanas";
 import { Asana } from "../models/asana";
 import Timer from 'easytimer.js';
 
@@ -28,8 +25,24 @@ const timer = ref(new Timer());
 const props = defineProps<{ asana: Asana; index?: number }>();
 const countdown = ref(0);
 const interval = ref();
-const emit = defineEmits(["nextPart"]);
-let party = ref(new Asana(props.asana));
+const bar = ref();
+const countdownInverse = computed(() => {
+  return props.asana.totalTime - countdown.value;
+})
+
+
+const playPause = () => {
+  if (timer.value.isPaused()) {
+    timer.value.start()
+    return;
+  }
+
+  if (timer.value.isRunning()) {
+    timer.value.pause();
+    return;
+  }
+
+}
 
 const countdownDisplay = computed(() => {
   if (countdown.value == 0) return "Begin";
@@ -37,13 +50,13 @@ const countdownDisplay = computed(() => {
 });
 
 const isSetup = computed(() => {
-  return between(countdown.value, 0, props.asana.setup);
+  return between(countdownInverse.value, 0, props.asana.setup ?? 0);
 });
 const isDuration = computed(() => {
-  return between(countdown.value, props.asana.setup, props.asana.duration);
+  return between(countdownInverse.value, props.asana.setup ?? 0, props.asana.duration ?? 0);
 });
 const isCooldown = computed(() => {
-  return between(countdown.value, props.asana.duration, props.asana.totalTime);
+  return between(countdownInverse.value, props.asana.duration ?? 0, props.asana.totalTime ?? 0);
 });
 
 const between = (x: number, min: number, max: number) => {
@@ -62,6 +75,7 @@ onMounted(() => {
 const listener = (e:any) => {
   console.log(timer.value.getTimeValues())
   countdown.value = timer.value.getTimeValues().seconds;
+  timerProgress();
 }
 
 onUnmounted(() => {
@@ -70,4 +84,31 @@ onUnmounted(() => {
   console.log("unmounted", props.asana.name);
 });
 
+const percentage = computed(() => {
+  return (countdown.value / props.asana.totalTime!) * 100
+});
+
+const timerProgress = () => {
+  let r = bar.value.getAttribute('r');
+  let c = Math.PI*(r*2);
+
+  bar.value.style.stroke = (isCooldown.value) ? 'blue' : (isDuration.value) ? 'purple' : (isSetup.value) ? 'yellow' : 'white';
+
+  let pct = ((100-percentage.value)/100)*c;
+  bar.value.style.strokeDashoffset = pct;
+  
+}
+
 </script>
+
+<style>
+  #svg circle {
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 1s linear;
+  stroke: #666;
+  stroke-width: 1em;
+}
+#svg #bar {
+  stroke: #FF9F1E;
+}
+</style>
