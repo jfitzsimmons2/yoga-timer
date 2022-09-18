@@ -35,22 +35,34 @@ export const asanas = [{
   parts: [{
     name: "First part",
     setup: 5,
-    duration: 30
+    duration: 30,
+    cooldown: 5
   }, {
     name: "Second part",
     setup: 5,
-    duration: 30
+    duration: 30,
+    cooldown: 5
   }, {
     name: "Third part",
     setup: 5,
-    duration: 30
+    duration: 30,
+    cooldown: 5
   }],
   sets: 2
 }, {
   id: 3,
   name: "Eagle pose",
+  parts: [{
+    name: 'Left under right',
   setup: 5,
   duration: 30,
+  cooldown: 5
+  }, {
+    name: 'Right under right',
+  setup: 5,
+  duration: 30,
+  cooldown: 5
+  }],
   sets: 2
 }, {
   id: 4,

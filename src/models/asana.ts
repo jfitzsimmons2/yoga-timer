@@ -3,7 +3,8 @@ interface AsanaOpts {
   setup?: number;
   duration?: number;
   cooldown?: number;
-  parts?: Array<AsanaOpts>
+  parts?: Array<AsanaOpts>;
+  totalTime?: number;
 }
 
 export class Asana {
@@ -16,13 +17,13 @@ export class Asana {
   }
 
   name: string;
-  setup: number;
-  duration: number;
-  cooldown: number;
-  parts?: Array<AsanaOpts> = [];
+  setup?: number;
+  duration?: number;
+  cooldown?: number;
+  parts?: Array<Asana> = [];
 
 
-  get totalTime(): number {
-    return this.setup + this.duration + this.cooldown as number
+  get totalTime(): number | undefined {
+    return (this.setup ?? 0) + (this.duration ?? 0) + (this.cooldown ?? 0) as number
   }
 }
