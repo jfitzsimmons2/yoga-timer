@@ -1,34 +1,15 @@
 <template>
   <div class="tc">
-    <h1>{{ props.asana.name }}</h1>
-
-    <div v-if="props.asana.parts">
-      <div v-for="(part, index) in props.asana.parts">
-        <div v-if="partIndex == index">
-          <strong>{{ part.name }}</strong>
-        </div>
-        <div v-else>
-          {{ part.name }}
-        </div>
-      </div>
-      <div v-for="(part, index) in props.asana.parts">
-        <PartsCounter
-          v-if="partIndex == index"
-          :asana="part"
-          :index="index"
-          @next-part="handleNextPart"
-        />
-      </div>
-    </div>
-    <AsanaCounter v-if="!hasParts" :asana="props.asana" />
+    <h1>{{ asana.name }}</h1>
+    <Counter :asana="props.asana" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref } from "vue";
 import { Asana } from "../models/asana";
-import PartsCounter from "./Counter.vue";
-import AsanaCounter from "./Counter.vue";
+
+import Counter from "./Counter.vue";
 
 const playing = ref(true);
 const props = defineProps<{ asana: Asana }>();
@@ -65,7 +46,7 @@ const playPause = () => {
 
 const startTimer = () => {
   interval.value = setInterval(() => {
-    if (countdown.value == props.asana.totalTime) {
+    if (countdown.value - 1 == props.asana.totalTime) {
       clearInterval(interval.value);
       emit("done");
     } else {
@@ -87,4 +68,6 @@ onMounted(() => {
 });
 </script>
 
-<style scoped></style>
+<style scoped>
+
+</style>

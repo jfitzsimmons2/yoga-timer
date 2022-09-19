@@ -1,27 +1,27 @@
 export const asanas = [{
   id: 0,
   name: "Breathing",
-  setup: 5,
-  duration: 60,
-  cooldown: 3
+  setup: 1,
+  duration: 1,
+  cooldown: 1
 }, {
   id: 1,
   name: "Half Moon w/ Hands to Feet",
   parts: [{
     name: "Left side",
-    setup: 5,
-    duration: 45,
-    cooldown: 3
+    setup: 1,
+    duration: 1,
+    cooldown: 1
   }, {
     name: "Right side",
-    setup: 5,
-    duration: 45,
-    cooldown: 3
+    setup: 1,
+    duration: 1,
+    cooldown: 1
   }, {
     name: "Backwards bend",
-    setup: 5,
-    duration: 45,
-    cooldown: 3
+    setup: 1,
+    duration: 1,
+    cooldown: 1
   }, {
     name: "Hands to feet",
     setup: 5,

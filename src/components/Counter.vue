@@ -1,11 +1,9 @@
 <template>
-  <p>
-    <h2>{{ props.asana.name }}</h2>
-  </p>
   <svg id="svg" width="200" height="200" viewPort="0 0 100 100" version="1.1" xmlns="http://www.w3.org/2000/svg">
-  <circle r="90" cx="100" cy="100" fill="transparent" stroke-dasharray="565.48" stroke-dashoffset="0"></circle>
-  <circle ref="bar" id="bar" r="90" cx="100" cy="100" fill="transparent" stroke-dasharray="565.48" stroke-dashoffset="0"></circle>
-</svg>
+    <circle r="90" cx="100" cy="100" fill="transparent" stroke-dasharray="565.48" stroke-dashoffset="0"></circle>
+    <circle ref="bar" id="bar" r="90" cx="100" cy="100" fill="transparent" stroke-dasharray="565.48"
+      stroke-dashoffset="0"></circle>
+  </svg>
   <p class="f-headline lh-solid ma0 tc">
     {{ countdownDisplay }}
   </p>
@@ -27,7 +25,7 @@ const countdown = ref(0);
 const interval = ref();
 const bar = ref();
 const countdownInverse = computed(() => {
-  return props.asana.totalTime - countdown.value;
+  return props.asana.totalTime ?? 0 - countdown.value;
 })
 
 
@@ -45,8 +43,8 @@ const playPause = () => {
 }
 
 const countdownDisplay = computed(() => {
-  if (countdown.value == 0) return "Begin";
-  else return countdown.value;
+
+  return countdown.value + 1;
 });
 
 const isSetup = computed(() => {
@@ -64,7 +62,7 @@ const between = (x: number, min: number, max: number) => {
 };
 
 const startTimer = () => {
-  timer.value.start({countdown: true, startValues: {seconds: props.asana.totalTime}});
+  timer.value.start({ countdown: true, startValues: { seconds: props.asana.totalTime } });
 };
 
 onMounted(() => {
@@ -72,9 +70,9 @@ onMounted(() => {
   timer.value.addEventListener('secondsUpdated', listener);
 });
 
-const listener = (e:any) => {
+const listener = (e: any) => {
   console.log(timer.value.getTimeValues())
-  countdown.value = timer.value.getTimeValues().seconds;
+  countdown.value = timer.value.getTotalTimeValues().seconds;
   timerProgress();
 }
 
@@ -90,25 +88,26 @@ const percentage = computed(() => {
 
 const timerProgress = () => {
   let r = bar.value.getAttribute('r');
-  let c = Math.PI*(r*2);
+  let c = Math.PI * (r * 2);
 
-  bar.value.style.stroke = (isCooldown.value) ? 'blue' : (isDuration.value) ? 'purple' : (isSetup.value) ? 'yellow' : 'white';
-
-  let pct = ((100-percentage.value)/100)*c;
+  let pct = ((100 - percentage.value) / 100) * c;
   bar.value.style.strokeDashoffset = pct;
-  
+
 }
 
 </script>
 
 <style>
-  #svg circle {
+#svg circle {
   stroke-dashoffset: 0;
   transition: stroke-dashoffset 1s linear;
-  stroke: #666;
+  stroke: #aaa;
   stroke-width: 1em;
 }
+
 #svg #bar {
-  stroke: #FF9F1E;
+  stroke: #fafafa;
+  transform: rotate(90deg);
+  transform-origin: center;
 }
 </style>
