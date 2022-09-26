@@ -4,18 +4,14 @@ import { Asana } from "./models/asana";
 import AsanaView from "./components/Asana.vue";
 import { asanas } from "./data/asanas";
 
-const asanasArray = ref<Array<Asana>>([]);
 const queue = ref<Array<Asana>>([]);
 
 const nextAsana = () => {
-  if (asanas.length - 1 !== currentIndex.value) currentIndex.value++;
+  console.log("next")
+  if (queue.value.length - 1 !== currentIndex.value) currentIndex.value++;
 };
 
 const currentIndex = ref(0);
-
-onMounted(() => {
-  createQueue();
-});
 
 const createQueue = () => {
   asanas.forEach((asana, i) => {
@@ -32,14 +28,17 @@ const createQueue = () => {
     }
   });
 };
+createQueue();
 </script>
 
 <template>
-  <div v-for="(asana, i) in queue">
+  <div v-for="(asana, i) in queue" :key="`${i}${asana.name}`">
     <AsanaView v-if="currentIndex == i" :asana="asana" @done="nextAsana" />
   </div>
   <button @click="currentIndex--">Previous</button>
   <button @click="currentIndex++">Next</button>
 </template>
 
-<style></style>
+<style>
+
+</style>

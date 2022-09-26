@@ -24,11 +24,11 @@ export const asanas = [{
     cooldown: 1
   }, {
     name: "Hands to feet",
-    setup: 5,
-    duration: 60,
-    cooldown: 3
+    setup: 1,
+    duration: 1,
+    cooldown: 1
   }],
-  sets: 2
+  sets: 3
 }, {
   id: 2,
   name: "Awkward pose",

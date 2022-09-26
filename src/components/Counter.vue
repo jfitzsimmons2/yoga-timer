@@ -5,11 +5,8 @@
       stroke-dashoffset="0"></circle>
   </svg>
   <p class="f-headline lh-solid ma0 tc">
-    {{ countdownDisplay }}
+    {{ timerRef.seconds }}
   </p>
-  <p><strong v-if="isSetup">SETUP</strong></p>
-  <p><strong v-if="isDuration">ASANA</strong></p>
-  <p><strong v-if="isCooldown">COOLDOWN</strong></p>
 
   <button @click="playPause" class="f2 mt4">Play/Pause</button>
 </template>
@@ -19,33 +16,28 @@ import { computed, onMounted, onUnmounted, ref } from "vue";
 import { Asana } from "../models/asana";
 import Timer from 'easytimer.js';
 
-const timer = ref(new Timer());
+const timer = new Timer();
+const timerRef = ref({ seconds: 0 });
 const props = defineProps<{ asana: Asana; index?: number }>();
-const countdown = ref(0);
 const interval = ref();
 const bar = ref();
 const countdownInverse = computed(() => {
-  return props.asana.totalTime ?? 0 - countdown.value;
+  return props.asana.totalTime ?? 0 - timerRef.value.seconds;
 })
 
 
 const playPause = () => {
-  if (timer.value.isPaused()) {
-    timer.value.start()
+  if (timer.isPaused()) {
+    timer.start()
     return;
   }
 
-  if (timer.value.isRunning()) {
-    timer.value.pause();
+  if (timer.isRunning()) {
+    timer.pause();
     return;
   }
 
 }
-
-const countdownDisplay = computed(() => {
-
-  return countdown.value + 1;
-});
 
 const isSetup = computed(() => {
   return between(countdownInverse.value, 0, props.asana.setup ?? 0);
@@ -62,28 +54,38 @@ const between = (x: number, min: number, max: number) => {
 };
 
 const startTimer = () => {
-  timer.value.start({ countdown: true, startValues: { seconds: props.asana.totalTime } });
+  timer.start({ countdown: true, startValues: { seconds: props.asana.totalTime } });
+  console.log(timer);
 };
+
+const emit = defineEmits(['done']);
 
 onMounted(() => {
   startTimer();
-  timer.value.addEventListener('secondsUpdated', listener);
+  timer.addEventListener('secondsUpdated', secondsUpdated);
+  timer.addEventListener('targetAchieved', targetAchieved);
 });
 
-const listener = (e: any) => {
-  console.log(timer.value.getTimeValues())
-  countdown.value = timer.value.getTotalTimeValues().seconds;
+const secondsUpdated = (e: any) => {
+  timerRef.value = { ...timer.getTotalTimeValues() };
+  console.log(timerRef.value.seconds, props.asana.totalTime);
   timerProgress();
 }
 
+const targetAchieved = (e: any) => {
+  console.log("targetAchieved")
+  setTimeout(() => emit('done'), 1000);
+}
+
 onUnmounted(() => {
-  timer.value.removeEventListener('secondsUpdated', listener);
+  timer.removeEventListener('secondsUpdated', secondsUpdated);
+  timer.removeEventListener('targetAchieved', targetAchieved);
   clearInterval(interval.value);
-  console.log("unmounted", props.asana.name);
+  console.log("unmounted", "counter");
 });
 
 const percentage = computed(() => {
-  return (countdown.value / props.asana.totalTime!) * 100
+  return (timerRef.value.seconds / props.asana.totalTime!) * 100
 });
 
 const timerProgress = () => {
@@ -92,7 +94,6 @@ const timerProgress = () => {
 
   let pct = ((100 - percentage.value) / 100) * c;
   bar.value.style.strokeDashoffset = pct;
-
 }
 
 </script>

@@ -1,7 +1,7 @@
 <template>
   <div class="tc">
     <h1>{{ asana.name }}</h1>
-    <Counter :asana="props.asana" />
+    <Counter :asana="props.asana" @done="$emit('done')" />
   </div>
 </template>
 
@@ -26,35 +26,6 @@ const hasParts = computed(() => props.asana.parts?.length);
 //   else return countdown.value;
 // });
 
-const handleNextPart = (e: any) => {
-  if (props.asana.parts?.length && props.asana.parts.length - 1 > e) {
-    partIndex.value++;
-  } else {
-    emit("done");
-  }
-};
-
-const playPause = () => {
-  if (playing.value) {
-    playing.value = false;
-    clearInterval(interval.value);
-  } else {
-    playing.value = true;
-    startTimer();
-  }
-};
-
-const startTimer = () => {
-  interval.value = setInterval(() => {
-    if (countdown.value - 1 == props.asana.totalTime) {
-      clearInterval(interval.value);
-      emit("done");
-    } else {
-      countdown.value++;
-    }
-  }, 1000);
-};
-
 onUnmounted(() => {
   clearInterval(interval.value);
   console.log("unmounted", props.asana.name);
@@ -62,9 +33,6 @@ onUnmounted(() => {
 
 onMounted(() => {
   console.log("mounted", props.asana.name);
-  if (!hasParts.value) {
-    startTimer();
-  }
 });
 </script>
 
