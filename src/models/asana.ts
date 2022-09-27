@@ -1,5 +1,5 @@
 export class Asana {
-  constructor(obj?: {id?: number, name: string, setup?: number, duration: number, cooldown?: number, parts?: Array<any>, sets?: number}) {
+  constructor(obj?: {id?: number, name: string, setup?: number, duration?: number, cooldown?: number, parts?: Array<any>, sets?: number}) {
     this.id = obj?.id ?? 0;
     this.name = obj?.name ?? "";
     this.setup = obj?.setup ?? 1;
