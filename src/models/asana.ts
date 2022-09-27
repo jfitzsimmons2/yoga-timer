@@ -1,14 +1,5 @@
-interface AsanaOpts {
-  name: string;
-  setup?: number;
-  duration?: number;
-  cooldown?: number;
-  parts?: Array<AsanaOpts>;
-  totalTime?: number;
-}
-
 export class Asana {
-  constructor(obj?: AsanaOpts) {
+  constructor(obj?: Asana) {
     this.name = obj?.name ?? "";
     this.setup = obj?.setup ?? 1;
     this.duration = obj?.duration ?? 5;

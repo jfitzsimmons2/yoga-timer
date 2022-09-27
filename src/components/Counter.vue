@@ -4,8 +4,8 @@
     <circle ref="bar" id="bar" r="90" cx="100" cy="100" fill="transparent" stroke-dasharray="565.48"
       stroke-dashoffset="0"></circle>
   </svg>
-  <p class="f-headline lh-solid ma0 tc">
-    {{ timerRef.seconds }}
+  <p class="f6 lh-solid ma0 tc" style="min-height: 50px;">
+    {{ display }}
   </p>
 
   <button @click="playPause" class="f2 mt4">Play/Pause</button>
@@ -17,14 +17,15 @@ import { Asana } from "../models/asana";
 import Timer from 'easytimer.js';
 
 const timer = new Timer();
-const timerRef = ref({ seconds: 0 });
+const timerRef = ref();
 const props = defineProps<{ asana: Asana; index?: number }>();
 const interval = ref();
 const bar = ref();
-const countdownInverse = computed(() => {
-  return props.asana.totalTime ?? 0 - timerRef.value.seconds;
-})
 
+const display = computed(() => {
+  if (timerRef.value)
+    return timer.getTimeValues().toString(['minutes', 'seconds', 'secondTenths']);
+})
 
 const playPause = () => {
   if (timer.isPaused()) {
@@ -39,22 +40,8 @@ const playPause = () => {
 
 }
 
-const isSetup = computed(() => {
-  return between(countdownInverse.value, 0, props.asana.setup ?? 0);
-});
-const isDuration = computed(() => {
-  return between(countdownInverse.value, props.asana.setup ?? 0, props.asana.duration ?? 0);
-});
-const isCooldown = computed(() => {
-  return between(countdownInverse.value, props.asana.duration ?? 0, props.asana.totalTime ?? 0);
-});
-
-const between = (x: number, min: number, max: number) => {
-  return x >= min && x < max;
-};
-
 const startTimer = () => {
-  timer.start({ countdown: true, startValues: { seconds: props.asana.totalTime } });
+  timer.start({ countdown: true, precision: 'secondTenths', startValues: { seconds: props.asana.totalTime } });
   console.log(timer);
 };
 
@@ -62,30 +49,32 @@ const emit = defineEmits(['done']);
 
 onMounted(() => {
   startTimer();
-  timer.addEventListener('secondsUpdated', secondsUpdated);
+  timer.addEventListener('secondTenthsUpdated', secondsUpdated);
   timer.addEventListener('targetAchieved', targetAchieved);
 });
 
+const countdownDisplay = ref();
+
 const secondsUpdated = (e: any) => {
   timerRef.value = { ...timer.getTotalTimeValues() };
-  console.log(timerRef.value.seconds, props.asana.totalTime);
+  countdownDisplay.value = timer.getTimeValues().toString(['minutes', 'seconds', 'secondTenths']);
   timerProgress();
 }
 
 const targetAchieved = (e: any) => {
   console.log("targetAchieved")
-  setTimeout(() => emit('done'), 1000);
+  emit('done');
 }
 
 onUnmounted(() => {
-  timer.removeEventListener('secondsUpdated', secondsUpdated);
+  timer.removeEventListener('secondTenthsUpdated', secondsUpdated);
   timer.removeEventListener('targetAchieved', targetAchieved);
   clearInterval(interval.value);
   console.log("unmounted", "counter");
 });
 
 const percentage = computed(() => {
-  return (timerRef.value.seconds / props.asana.totalTime!) * 100
+  return (timerRef.value.secondTenths / (props.asana.totalTime! * 10)) * 100
 });
 
 const timerProgress = () => {
@@ -101,8 +90,8 @@ const timerProgress = () => {
 <style>
 #svg circle {
   stroke-dashoffset: 0;
-  transition: stroke-dashoffset 1s linear;
-  stroke: #aaa;
+  transition: stroke-dashoffset .1s linear;
+  stroke: rgb(54, 55, 128);
   stroke-width: 1em;
 }
 

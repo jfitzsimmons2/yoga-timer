@@ -1,9 +1,9 @@
 export const asanas = [{
   id: 0,
   name: "Breathing",
-  setup: 1,
-  duration: 1,
-  cooldown: 1
+  setup: 5,
+  duration: 60,
+  cooldown: 5
 }, {
   id: 1,
   name: "Half Moon w/ Hands to Feet",
