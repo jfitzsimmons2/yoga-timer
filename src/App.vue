@@ -7,7 +7,7 @@ import { asanas } from "./data/asanas";
 const queue = ref<Array<Asana>>([]);
 
 const nextAsana = () => {
-  console.log("next")
+  console.log("next");
   if (queue.value.length - 1 !== currentIndex.value) currentIndex.value++;
 };
 
@@ -39,6 +39,4 @@ createQueue();
   <button @click="currentIndex++">Next</button>
 </template>
 
-<style>
-
-</style>
+<style></style>
