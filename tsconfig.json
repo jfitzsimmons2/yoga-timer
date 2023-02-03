@@ -9,7 +9,20 @@
     "sourceMap": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "lib": ["esnext", "dom"]
+    "lib": ["esnext", "dom"],
+    "baseUrl": "./",
+    "paths": {
+      "@/*": ["/src/*"],
+      "@data": ["/src/data"],
+      "@models": ["/src/models"],
+      "@components": ["/src/components"],
+      "@views": ["/src/router/views"],
+      "@router/": ["/src/router/*"],
+      "@store": ["/src/store"],
+      "@assets": ["/src/assets"],
+      "@styles": ["/src/styles"],
+      "@utils": ["/src/utils"],
+    }
   },
   "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],
   "references": [{ "path": "./tsconfig.node.json" }]

@@ -4,5 +4,17 @@
     "module": "esnext",
     "moduleResolution": "node"
   },
-  "include": ["vite.config.ts"]
+  "include": ["vite.config.ts"],
+  "paths": {
+    "@/*": ["/src/*"],
+    "@data": ["/src/data"],
+    "@models": ["/src/models"],
+    "@components": ["/src/components"],
+    "@views": ["/src/router/views"],
+    "@router/": ["/src/router/*"],
+    "@store": ["/src/store"],
+    "@assets": ["/src/assets"],
+    "@styles": ["/src/styles"],
+    "@utils": ["/src/utils"],
+  }
 }
